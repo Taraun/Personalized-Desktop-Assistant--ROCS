@@ -1,0 +1,265 @@
+import pyttsx3
+import datetime
+import speech_recognition as sr
+import wikipedia
+import webbrowser
+import os
+import smtplib
+import pywhatkit as wk
+# from database import getans
+# from database import qa
+import requests
+import cv2
+import random
+import pyautogui
+import time
+
+engine= pyttsx3.init('sapi5')#to get a voice for output
+voices= engine.getProperty('voices') 
+engine.setProperty('voice', voices[1].id)
+
+def speak(audio):#for speaking
+    engine.say(audio)
+    engine.runAndWait()
+
+def wishMe():#wishing the user
+    hour= int(datetime.datetime.now().hour)
+    if hour>=0 and hour<12:
+        speak("Good Morning!")
+        print("Good Morning!")
+    elif hour>=12 and hour<18:
+        speak("Good Afternoon!")
+        print("Good Afternoon!")
+    else:
+        speak("Good Evening!")
+        print("Good Evening!")
+
+    speak("This is Rocs how may i rock your world?")
+    print("This is Rocs how may i rock your world?")
+
+def takeCommand():#taking user command
+    ''' 
+    it takes mic - voice input and returns string output
+    '''
+    r= sr.Recognizer()
+    with sr.Microphone() as source:
+        r.pause_threshold =1
+        audio = r.listen(source)
+        print("i am listening...")
+    try:
+        print("working on it...")
+        query = r.recognize_google(audio, language='en-in') #recognizing the voice for processing
+        query = query.lower()
+        print(f"user said: {query}\n ")
+    except Exception as e: #when voice cant be recognized
+        print("Can't Recognise will you say that again please...")
+        speak("Can't Recognise will you say that again please...")
+        return "None"
+    return query#returning query for processing 
+
+def sendEmail(to, content):#function to send mail
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.ehlo()
+    server.startls()
+    server.login('youremail@gmail.com', 'your-password')
+    server.sendmail('youremail@gmail.com', to, content)
+    server.close()
+
+
+if __name__ == "__main__":
+    wishMe()#calling wish me to greet the user
+    while True: #using loop for continuous processing
+        query = takeCommand().lower()
+        #logic for executing tasks based on query
+        if 'wikipedia' in query:
+            speak('searching in wikipedia....')
+            query = query.replace("wikipedia", "")
+            results = wikipedia.summary(query, sentences=1)
+            speak("According to Wikipedia")
+            speak(results)
+            print(results)
+
+        elif 'open youtube' in query:
+            speak("what do u want me to play?")
+            print("what do u want me to play?")
+            qry=takeCommand().lower()
+            wk.playonyt(f"{qry}")
+
+        elif 'open google' in query:
+            speak("what should i search?")
+            print("what should i search?")
+            qry=takeCommand().lower()
+            webbrowser.open(f"{qry}")
+            results= wikipedia.summary(qry, sentences=1)
+            speak(results)
+
+        elif 'open stack overflow' in query:
+            webbrowser.open("stackoverflow.com")
+            speak("opening stack overflow")
+        elif 'the time' in query:
+            strTime= datetime.datetime.now().strftime("%H:%M:%S")
+            speak(f"Yo! the time is {strTime}")
+            print(f"Yo! the time is {strTime}")
+        elif 'open code' in query:
+            codePath = "C:\\Users\\USER\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
+            os.startfile(codePath)
+            speak("opening code")
+
+        elif 'close browser' in query:
+            os.system("taskkill /f/im msedge.exe")
+
+        elif 'close chrome' in query:
+            os.system("taskkill /f/im chrome.exe")
+
+        elif 'take screenshot' in query: #30
+            speak('tell me a name for the file')
+            name=takeCommand().lower()
+            time.sleep(3)
+            img = pyautogui.screenshot()
+            img.save(f"{name}.png")
+            speak("screenshot saved")
+
+        elif 'email to naman' in query:
+            try:
+                speak("What should I say")
+                content = takeCommand()
+                to = "namanagarwal@email.com"
+                sendEmail(to, content)
+                speak("Email has been sent!")
+            except Exception as e:
+                print(e)
+                speak("Sorry mate mail cant be sent!")
+                
+        elif 'who are you' in query:
+            speak("I am rocs a smart A.I. for your fun")
+            print("I am rocs a smart A.I. for your fun")
+
+        elif 'hello rocks'  in query:
+            speak("Hello i am ready to rock your world")
+            print("Hello i am ready to rock your world")
+        elif 'hello rock'  in query:
+            speak("Hello i am ready to rock your world")
+            print("Hello i am ready to rock your world")
+        elif 'hello rocs' in query:
+            speak("Hello i am ready to rock your world")
+            print("Hello i am ready to rock your world")
+        elif 'hi rocks' in query:
+            speak("Hello i am ready to rock your world")
+            print("Hello i am ready to rock your world")
+        elif 'hi rock' in query:
+            speak("Hello i am ready to rock your world")
+            print("Hello i am ready to rock your world")
+
+        elif 'how are you' in query:
+            speak("I am fine how are you?")
+            print("I am fine how are you?")
+
+        elif 'i am fine' in query:
+            speak("nice anything i can do for you?")
+            print("nice anything i can do for you?")
+
+        elif 'i love you' in query:
+            speak("i am not ment for love only work")
+            print("i am not ment for love only work")
+
+        elif 'your name' in query:
+            speak("i am Rocs a rocking AI")
+            print("i am Rocs a rocking AI")
+
+        elif 'better than google' in query:
+            speak("i try to follow my idol my role model but i try to be better")
+            print("i try to follow my idol my role model but i try to be better")
+
+        elif 'better you or google'  in query:
+            speak("i try to follow my idol my role model but i try to be better")
+            print("i try to follow my idol my role model but i try to be better")
+
+        elif  'better than alexa'  in query:
+            speak("i try to follow my idol my role model but i try to be better")
+            print("i try to follow my idol my role model but i try to be better")
+
+        elif 'better you or alexa' in query:
+            speak("i try to follow my idol my role model but i try to be better")
+            print("i try to follow my idol my role model but i try to be better")
+        
+
+        elif 'what is' in query:
+            print("Searching wikipedia")
+            speak("Searching wikipedia")
+            query=query.replace("what is", "")
+            results= wikipedia.summary(query, sentences=1)
+            speak("according to wikipedia")
+            speak(results)
+            print(results)
+
+        elif 'who is' in query:
+            print("Searching wikipedia")
+            speak("Searching wikipedia")
+            query=query.replace("whho is", "")
+            results= wikipedia.summary(query, sentences=1)
+            speak("according to wikipedia")
+            speak(results)
+            print(results)
+        
+        elif 'open camera' in query:
+            cap= cv2.VideoCapture(0)
+            while True:
+                ret, img= cap.read()
+                cv2.imshow('webcam', img)
+                k= cv2.waitKey(50)
+                if k==27:
+                    break;
+            cap.release()
+            cv2.destroyAllWindows()
+
+        elif 'volume up' in query:
+            for num in range(1,11):
+                pyautogui.press("volumeup")
+        elif 'volume down' in query:
+            for num in range(1,11):
+                pyautogui.press("volumedown")
+        elif "mute" in query:
+            pyautogui.press("volumemute")
+        elif "unmute" in query:
+            pyautogui.press("volumemute")
+
+        
+        elif 'close browser' in query:
+            browserExe = "msedge.exe"
+            os.system("taskkill/f /im "+browserExe)
+
+        elif 'close chrome' in query:
+            os.system("taskkill /f /im chrome.exe")
+        
+        # elif 'joke' in query:
+        #     url="https://official-joke-api.appsot.com/random_joke"
+        #     json_data=requests.get(url).json()
+
+        #     arr=["",""]
+        #     arr[0]=json_data["setup"]
+        #     arr[1]= json_data["punchline"]
+        #     print(arr[0])
+        #     speak(arr[0])
+        #     print(arr[1])
+        #     speak(arr[1])
+        # elif qa()!="" :
+        #     answer= getans(query)
+        #     speak(answer)
+        #     print(answer)
+
+        elif 'shut up' in query:
+            speak("sorry! ill be offline")
+            print("soryy! ill be offline")
+            break 
+        elif 'shut down'  in query:
+            speak("sorry! ill be offline")
+            print("soryy! ill be offline")
+            break
+        elif 'quit'  in query:
+            speak("See you soon")
+            print("see you soon")
+            break
+        elif 'bye' in query:
+            speak("See you soon")
+            print("see you soon")
+            break
